@@ -1,8 +1,8 @@
-import {Predicate} from "@/lib/Predicate";
+import {JsonPathPredicate} from "@/lib/JsonPathPredicate";
 
 const jp = require('jsonpath');
 
-export default class ExistsPredicate implements Predicate {
+export default class ExistsPredicate implements JsonPathPredicate {
   private readonly expr: string;
 
   constructor(expr: string) {

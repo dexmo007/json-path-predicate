@@ -1,9 +1,9 @@
-import { Predicate } from './Predicate';
+import { JsonPathPredicate } from './JsonPathPredicate';
 
 const jp = require('jsonpath');
 
 
-export default class EqualsPredicate implements Predicate {
+export default class EqualsPredicate implements JsonPathPredicate {
   private args: String[];
 
   constructor(args: String[]) {
