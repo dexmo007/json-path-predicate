@@ -21,20 +21,32 @@
     <label>
       Results
     </label>
-    <pre v-if="!testJson">
+    <div v-if="!predicate">
+      <font-awesome-icon icon="times-circle" class="result-icon"></font-awesome-icon>
+      <pre>
+        First of all, get your predicate fixed!
+      </pre>
+    </div>
+    <div v-else-if="!testJson || !result" class="error-message">
+      <div class="result-icon error-icon">
+        <font-awesome-icon icon="times-circle"></font-awesome-icon>
+      </div>
+      <pre v-if="!testJson">
       Invalid JSON
     </pre>
-    <pre v-if="!result" class="error-message">
+      <pre v-else-if="!result" class="error-message">
       Predicate not matching
     </pre>
-    <pre v-else class="success-message">
-      Matching
-    </pre>
+    </div>
+    <div v-else class="result-icon success-icon">
+      <font-awesome-icon icon="check-circle"/>
+    </div>
   </div>
 </template>
 
 <script lang="js">
 import aceEditor from 'vue2-ace-editor';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import JsonPathPredicateParser from '../lib/JsonPathPredicateParser';
 
 import 'brace/ext/language_tools';
@@ -57,7 +69,7 @@ export default {
   name: 'HelloWorld',
   data() {
     return {
-      rawPredicate: '{"$and":["$.foo", "$.bar", {"$eq": ["$.zick","$.zack"]},{"$or":["$.harry","$.potter"]}]}',
+      rawPredicate: '{"$and":["$.foo", "$.bar", {"$eq": ["$.zick","$.zack"]},{"$or":["$.harry","$.potter"]}, {"$regex": {"$.foo":"^\\\\s*$"}}]}',
       predicate: null,
       predicateErrorMessage: null,
       rawTestJson: '{"foo":"","bar":0,"zick":0,"zack":0,"potter":0,"harry":0}',
@@ -115,7 +127,8 @@ export default {
     predicateEditorInit(e) {
       e.on('change', () => {
         this.predicateErrorMessage = null;
-        if (e.getValue().trim() === '') {
+        if (e.getValue()
+          .trim() === '') {
           this.predicate = null;
           return;
         }
@@ -164,6 +177,7 @@ export default {
   },
   components: {
     editor: aceEditor,
+    FontAwesomeIcon,
   },
 };
 </script>
@@ -175,11 +189,7 @@ export default {
     flex-direction: column;
   }
 
-  .form-textarea {
-    border: 2px solid greenyellow;
-  }
-
-  textarea.error, div.error {
+  div.error {
     border: 2px solid red;
   }
 
@@ -187,7 +197,15 @@ export default {
     color: red;
   }
 
-  .success-message {
+  .result-icon {
+    font-size: 3em;
+  }
+
+  .error-icon {
+    color: red;
+  }
+
+  .success-icon {
     color: #3dff72;
   }
 

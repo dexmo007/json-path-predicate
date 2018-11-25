@@ -3,6 +3,16 @@ import EqualsPredicate from './EqualsPredicate';
 import {negate, JsonPathPredicate} from "@/lib/JsonPathPredicate";
 import AndPredicate from "@/lib/AndPredicate";
 import OrPredicate from "@/lib/OrPredicate";
+import RegexPredicate from "@/lib/RegexPredicate";
+
+// noinspection JSUnusedGlobalSymbols
+export const operators: {[key: string]: (arg: any) => JsonPathPredicate} = {
+  $eq: arg => new EqualsPredicate(arg),
+  $ne: arg => negate(new EqualsPredicate(arg)),
+  $and: arg => new AndPredicate(JsonPathPredicateParser.parseArray(arg)),
+  $or: arg => new OrPredicate(JsonPathPredicateParser.parseArray(arg)),
+  $regex: arg => RegexPredicate.parse(arg)
+};
 
 export default class JsonPathPredicateParser {
 
@@ -33,18 +43,23 @@ export default class JsonPathPredicateParser {
       throw new Error(`only a single key on root level of predicate allowed: ${keys.join()} for ${JSON.stringify(expr)}`);
     }
     const op = keys[0];
-    switch (op) {
-      case '$eq':
-        return new EqualsPredicate(expr.$eq);
-      case '$ne':
-        return negate(new EqualsPredicate(expr.$ne));
-      case '$and':
-        return new AndPredicate(JsonPathPredicateParser.parseArray(expr.$and));
-      case '$or':
-        return new OrPredicate(JsonPathPredicateParser.parseArray(expr.$or));
-      default:
-        throw new Error(`invalid op: ${op}`);
+    const parser = operators[op];
+    if (!parser) {
+      throw new Error(`invalid operator: ${op}`);
     }
+    return parser(expr[op]);
+    // switch (op) {
+    //   case '$eq':
+    //     return new EqualsPredicate(expr.$eq);
+    //   case '$ne':
+    //     return negate(new EqualsPredicate(expr.$ne));
+    //   case '$and':
+    //     return new AndPredicate(JsonPathPredicateParser.parseArray(expr.$and));
+    //   case '$or':
+    //     return new OrPredicate(JsonPathPredicateParser.parseArray(expr.$or));
+    //   default:
+    //     throw new Error(`invalid op: ${op}`);
+    // }
   }
 
   static parseArray(predicates: any[]): JsonPathPredicate[] {
