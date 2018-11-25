@@ -4,13 +4,20 @@ export interface JsonPathPredicate {
   stringify(): string;
 }
 
+class NegatedPredicate implements JsonPathPredicate {
+
+  constructor(private readonly predicate: JsonPathPredicate) {
+  }
+
+  stringify(): string {
+    return `!(${this.predicate.stringify()})`;
+  }
+  test(o: Object): boolean {
+    return !this.predicate.test(o);
+  }
+
+}
+
 export function negate(predicate: JsonPathPredicate) {
-  return new class implements JsonPathPredicate {
-    stringify(): string {
-      return `!(${predicate.stringify()})`;
-    }
-    test(o: Object): boolean {
-      return !predicate.test(o);
-    }
-  };
+  return new NegatedPredicate(predicate);
 }
