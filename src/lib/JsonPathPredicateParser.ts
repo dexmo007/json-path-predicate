@@ -2,16 +2,18 @@ import ExistsPredicate from './ExistsPredicate';
 import EqualsPredicate from './EqualsPredicate';
 import {negate, JsonPathPredicate} from "@/lib/JsonPathPredicate";
 import AndPredicate from "@/lib/AndPredicate";
+import OrPredicate from "@/lib/OrPredicate";
 
 export default class JsonPathPredicateParser {
 
   static parse(expr: string): JsonPathPredicate {
+    let exprObj: any;
     try {
-      const exprObj = JSON.parse(expr);
-      return this.parseInternal(exprObj);
+      exprObj = JSON.parse(expr);
     } catch (e) {
-      return this.parseInternal(expr);
+      return JsonPathPredicateParser.parseInternal(expr);
     }
+    return JsonPathPredicateParser.parseInternal(exprObj);
   }
 
   private static parseInternal(expr: (string | Object)) {
@@ -20,7 +22,7 @@ export default class JsonPathPredicateParser {
       return new ExistsPredicate(expr);
     }
     if (typeof expr === 'object') {
-      return this.parseObject(expr);
+      return JsonPathPredicateParser.parseObject(expr);
     }
     throw new Error(`invalid type for expression: ${typeof expr}`);
   }
@@ -37,13 +39,15 @@ export default class JsonPathPredicateParser {
       case '$ne':
         return negate(new EqualsPredicate(expr.$ne));
       case '$and':
-        return new AndPredicate(this.parseArray(expr.$and));
+        return new AndPredicate(JsonPathPredicateParser.parseArray(expr.$and));
+      case '$or':
+        return new OrPredicate(JsonPathPredicateParser.parseArray(expr.$or));
       default:
         throw new Error(`invalid op: ${op}`);
     }
   }
 
   static parseArray(predicates: any[]): JsonPathPredicate[] {
-    return predicates.map(this.parseInternal);
+    return predicates.map(JsonPathPredicateParser.parseInternal);
   }
 }

@@ -17,4 +17,8 @@ export default class AndPredicate implements JsonPathPredicate {
     return true;
   }
 
+  stringify(): string {
+    return this.predicates.map(p => p.stringify()).join(' && ');
+  }
+
 };

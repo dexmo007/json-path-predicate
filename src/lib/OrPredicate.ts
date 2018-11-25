@@ -17,4 +17,8 @@ export default class OrPredicate implements JsonPathPredicate {
     return false;
   }
 
+  stringify(): string {
+    return '(' + this.predicates.map(p => p.stringify()).join(' || ') + ')';
+  }
+
 }

@@ -1,5 +1,9 @@
 <template>
   <div id="app">
+    <div id="header">
+      <img id="logo" src="./assets/dexmo-icon.png" alt="DexmoHQ Logo"/>
+      <h1>JSON Path Predicates</h1>
+    </div>
     <HelloWorld/>
   </div>
 </template>
@@ -16,12 +20,23 @@ export default {
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+  #app {
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 60px;
+  }
+
+  #header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #logo {
+    width: 70px;
+    margin-right: 10px;
+  }
 </style>

@@ -14,4 +14,8 @@ export default class ExistsPredicate implements JsonPathPredicate {
     return jp.query(o, this.expr).length > 0;
   }
 
+  stringify(): string {
+    return this.expr;
+  }
+
 }
