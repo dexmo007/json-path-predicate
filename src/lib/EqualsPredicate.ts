@@ -1,17 +1,11 @@
-import {JsonPathPredicate} from './JsonPathPredicate';
-
 import deepEqual from 'deep-equal';
+import jp from 'jsonpath';
+import { JsonPathPredicate, JsonPathPredicates } from './JsonPathPredicates';
 
-
-const jp = require('jsonpath');
-
-
-export default class EqualsPredicate implements JsonPathPredicate {
-  private readonly args: String[];
-
-  constructor(args: String[]) {
+@JsonPathPredicates.register('$eq', arg => new EqualsPredicate(arg))
+class EqualsPredicate implements JsonPathPredicate {
+  constructor(private readonly args: string[]) {
     args.forEach(arg => jp.parse(arg));
-    this.args = args;
   }
 
   test(o: Object): boolean {
@@ -20,7 +14,7 @@ export default class EqualsPredicate implements JsonPathPredicate {
       return false;
     }
     const first = firstResults[0];
-    for (let i = 1; i < this.args.length; i++) {
+    for (let i = 1; i < this.args.length; i += 1) {
       const results = jp.query(o, this.args[i]);
       if (results.length === 0) {
         return false;

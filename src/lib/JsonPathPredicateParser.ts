@@ -1,21 +1,22 @@
 import ExistsPredicate from './ExistsPredicate';
-import EqualsPredicate from './EqualsPredicate';
-import {negate, JsonPathPredicate} from "@/lib/JsonPathPredicate";
-import AndPredicate from "@/lib/AndPredicate";
-import OrPredicate from "@/lib/OrPredicate";
-import RegexPredicate from "@/lib/RegexPredicate";
+import { JsonPathPredicate, JsonPathPredicates, PredicateDefinitions } from '@/lib/JsonPathPredicates';
 
-// noinspection JSUnusedGlobalSymbols
-export const operators: {[key: string]: (arg: any) => JsonPathPredicate} = {
-  $eq: arg => new EqualsPredicate(arg),
-  $ne: arg => negate(new EqualsPredicate(arg)),
-  $and: arg => new AndPredicate(JsonPathPredicateParser.parseArray(arg)),
-  $or: arg => new OrPredicate(JsonPathPredicateParser.parseArray(arg)),
-  $regex: arg => RegexPredicate.parse(arg)
-};
+import './AndPredicate';
+import './EqualsPredicate';
+import './GreaterThanOrEqualsPredicate';
+import './GreaterThanPredicate';
+import './InPredicate';
+import './LessThanOrEqualsPredicate';
+import './LessThanPredicate';
+import './NotEqualsPredicate';
+import './NotPredicate';
+import './OrPredicate';
+import './RegexPredicate';
+
+
+export const operators: PredicateDefinitions = JsonPathPredicates.GetDefinitions();
 
 export default class JsonPathPredicateParser {
-
   static parse(expr: string): JsonPathPredicate {
     let exprObj: any;
     try {
@@ -27,7 +28,6 @@ export default class JsonPathPredicateParser {
   }
 
   private static parseInternal(expr: (string | Object)) {
-
     if (typeof expr === 'string') {
       return new ExistsPredicate(expr);
     }
@@ -48,18 +48,6 @@ export default class JsonPathPredicateParser {
       throw new Error(`invalid operator: ${op}`);
     }
     return parser(expr[op]);
-    // switch (op) {
-    //   case '$eq':
-    //     return new EqualsPredicate(expr.$eq);
-    //   case '$ne':
-    //     return negate(new EqualsPredicate(expr.$ne));
-    //   case '$and':
-    //     return new AndPredicate(JsonPathPredicateParser.parseArray(expr.$and));
-    //   case '$or':
-    //     return new OrPredicate(JsonPathPredicateParser.parseArray(expr.$or));
-    //   default:
-    //     throw new Error(`invalid op: ${op}`);
-    // }
   }
 
   static parseArray(predicates: any[]): JsonPathPredicate[] {

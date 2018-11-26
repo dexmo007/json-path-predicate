@@ -1,8 +1,8 @@
 import Vue from 'vue';
-import App from './App.vue';
 
-import {library} from '@fortawesome/fontawesome-svg-core';
-import {faCheckCircle, faTimesCircle} from '@fortawesome/free-solid-svg-icons';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faCheckCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import App from './App.vue';
 
 library.add(faCheckCircle);
 library.add(faTimesCircle);

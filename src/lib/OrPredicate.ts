@@ -1,7 +1,8 @@
-import {JsonPathPredicate} from "@/lib/JsonPathPredicate";
+import { JsonPathPredicate, JsonPathPredicates } from '@/lib/JsonPathPredicates';
+import JsonPathPredicateParser from '@/lib/JsonPathPredicateParser';
 
-export default class OrPredicate implements JsonPathPredicate {
-
+@JsonPathPredicates.register('$or', arg => new OrPredicate(JsonPathPredicateParser.parseArray(arg)))
+class OrPredicate implements JsonPathPredicate {
   private readonly predicates: JsonPathPredicate[];
 
   constructor(predicates: JsonPathPredicate[]) {
@@ -9,7 +10,7 @@ export default class OrPredicate implements JsonPathPredicate {
   }
 
   test(o: Object): boolean {
-    for (let i = 0; i < this.predicates.length; i++) {
+    for (let i = 0; i < this.predicates.length; i += 1) {
       if (this.predicates[i].test(o)) {
         return true;
       }
@@ -18,7 +19,6 @@ export default class OrPredicate implements JsonPathPredicate {
   }
 
   stringify(): string {
-    return '(' + this.predicates.map(p => p.stringify()).join(' || ') + ')';
+    return `(${this.predicates.map(p => p.stringify()).join(' || ')})`;
   }
-
 }

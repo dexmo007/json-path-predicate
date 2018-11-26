@@ -1,13 +1,10 @@
-import {JsonPathPredicate} from "@/lib/JsonPathPredicate";
+import { JsonPathPredicate } from '@/lib/JsonPathPredicates';
 
-const jp = require('jsonpath');
+import jp from 'jsonpath';
 
 export default class ExistsPredicate implements JsonPathPredicate {
-  private readonly expr: string;
-
-  constructor(expr: string) {
+  constructor(private readonly expr: string) {
     jp.parse(expr);
-    this.expr = expr;
   }
 
   test(o: Object): boolean {
@@ -17,5 +14,4 @@ export default class ExistsPredicate implements JsonPathPredicate {
   stringify(): string {
     return this.expr;
   }
-
 }

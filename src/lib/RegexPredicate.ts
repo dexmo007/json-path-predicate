@@ -1,9 +1,9 @@
-import {JsonPathPredicate} from "@/lib/JsonPathPredicate";
+import { JsonPathPredicate, JsonPathPredicates } from '@/lib/JsonPathPredicates';
 
 import jp from 'jsonpath';
 
-export default class RegexPredicate implements JsonPathPredicate {
-
+@JsonPathPredicates.register('$regex', arg => RegexPredicate.parse(arg))
+class RegexPredicate implements JsonPathPredicate {
   constructor(private readonly regex: RegExp,
               private readonly path: string) {
     jp.parse(path);
@@ -22,5 +22,4 @@ export default class RegexPredicate implements JsonPathPredicate {
     const [[path, regex]] = Object.entries(arg);
     return new RegexPredicate(new RegExp(regex), path);
   }
-
 }

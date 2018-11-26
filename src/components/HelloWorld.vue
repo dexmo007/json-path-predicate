@@ -6,7 +6,7 @@
     </label>
     <div v-bind:class="{error: predicate === false}">
       <editor v-model="rawPredicate" @init="predicateEditorInit" lang="json" theme="chrome"
-              width="100%" height="300px"
+              width="100%" height="320px"
       />
       <span v-if="predicateErrorMessage" class="error-message">
         {{predicateErrorMessage}}
@@ -53,10 +53,6 @@ import 'brace/ext/language_tools';
 import 'brace/mode/json';
 import 'brace/theme/chrome';
 
-function isReformat(e) {
-  return e.key === 'l' && e.ctrlKey && e.altKey;
-}
-
 function reformat(jsonString) {
   try {
     return JSON.stringify(JSON.parse(jsonString), undefined, 2);
@@ -65,45 +61,61 @@ function reformat(jsonString) {
   }
 }
 
+// noinspection JSUnusedGlobalSymbols used by command manager
+const autoFormatCommand = {
+  name: 'AutoFormat',
+  bindKey: {
+    win: 'Ctrl-Alt-l',
+    mac: 'Command-Alt-l',
+  },
+  exec: (editor) => {
+    console.log('reformatting');
+    editor.setValue(reformat(editor.getValue()), 1);
+  },
+};
+
 export default {
   name: 'HelloWorld',
   data() {
     return {
-      rawPredicate: '{"$and":["$.foo", "$.bar", {"$eq": ["$.zick","$.zack"]},{"$or":["$.harry","$.potter"]}, {"$regex": {"$.foo":"^\\\\s*$"}}]}',
+      rawPredicate: JSON.stringify({
+        $and: [
+          '$.foo',
+          {
+            $eq: [
+              '$.foo', '$.bar',
+            ],
+          },
+          {
+            $gt: {
+              '$.zick': '$.zack',
+            },
+          },
+          {
+            $in: {
+              '$.zick': '$.zz',
+            },
+          },
+          {
+            $regex: {
+              '$.foo': /^\s*$/.source,
+            },
+          },
+        ],
+      }, undefined, 2),
       predicate: null,
       predicateErrorMessage: null,
-      rawTestJson: '{"foo":"","bar":0,"zick":0,"zack":0,"potter":0,"harry":0}',
+      rawTestJson: JSON.stringify({
+        foo: '',
+        bar: '',
+        zick: 1,
+        zack: 0,
+        zz: [0, 1],
+      }, undefined, 2),
       testJson: null,
     };
   },
   methods: {
-    buildPredicate(e) {
-      if (isReformat(e)) {
-        this.rawPredicate = reformat(this.rawPredicate);
-        return;
-      }
-      if (this.rawPredicate === '') {
-        this.predicate = null;
-        return;
-      }
-      try {
-        this.predicate = JsonPathPredicateParser.parse(this.rawPredicate);
-      } catch (error) {
-        // console.error(error);
-        this.predicate = false;
-      }
-    },
-    tryParseJson(e) {
-      if (isReformat(e)) {
-        this.rawTestJson = reformat(this.rawTestJson);
-        return;
-      }
-      try {
-        this.testJson = JSON.parse(this.rawTestJson);
-      } catch (error) {
-        this.testJson = null;
-      }
-    },
     testJsonEditorInit(e) {
       e.on('change', () => {
         try {
@@ -112,17 +124,7 @@ export default {
           this.testJson = null;
         }
       });
-      e.commands.addCommand({
-        name: 'AutoFormat',
-        bindKey: {
-          win: 'Ctrl-Alt-l',
-          mac: 'Command-Alt-l',
-        },
-        exec: (editor) => {
-          console.log('reformatting');
-          editor.setValue(reformat(editor.getValue()), 1);
-        },
-      });
+      e.commands.addCommand(autoFormatCommand);
     },
     predicateEditorInit(e) {
       e.on('change', () => {
@@ -140,17 +142,7 @@ export default {
           this.predicateErrorMessage = error.message;
         }
       });
-      e.commands.addCommand({
-        name: 'AutoFormat',
-        bindKey: {
-          win: 'Ctrl-Alt-l',
-          mac: 'Command-Alt-l',
-        },
-        exec: (editor) => {
-          console.log('reformatting');
-          editor.setValue(reformat(editor.getValue()), 1);
-        },
-      });
+      e.commands.addCommand(autoFormatCommand);
     },
   },
   computed: {
@@ -162,18 +154,8 @@ export default {
     },
   },
   created() {
-    this.buildPredicate({
-      key: 'l',
-      ctrlKey: true,
-      altKey: true,
-    });
-    this.tryParseJson({
-      key: 'l',
-      ctrlKey: true,
-      altKey: true,
-    });
-    this.buildPredicate({});
-    this.tryParseJson({});
+    this.predicate = JsonPathPredicateParser.parse(this.rawPredicate);
+    this.testJson = JSON.parse(this.rawTestJson);
   },
   components: {
     editor: aceEditor,

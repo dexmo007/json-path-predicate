@@ -1,7 +1,8 @@
-import {JsonPathPredicate} from "@/lib/JsonPathPredicate";
+import { JsonPathPredicate, JsonPathPredicates } from '@/lib/JsonPathPredicates';
+import JsonPathPredicateParser from '@/lib/JsonPathPredicateParser';
 
-export default class AndPredicate implements JsonPathPredicate {
-
+@JsonPathPredicates.register('$and', arg => new AndPredicate(JsonPathPredicateParser.parseArray(arg)))
+class AndPredicate implements JsonPathPredicate {
   private readonly predicates: JsonPathPredicate[];
 
   constructor(predicates: JsonPathPredicate[]) {
@@ -9,7 +10,7 @@ export default class AndPredicate implements JsonPathPredicate {
   }
 
   test(o: Object): boolean {
-    for (let i = 0; i < this.predicates.length; i++) {
+    for (let i = 0; i < this.predicates.length; i += 1) {
       if (!this.predicates[i].test(o)) {
         return false;
       }
@@ -20,5 +21,4 @@ export default class AndPredicate implements JsonPathPredicate {
   stringify(): string {
     return this.predicates.map(p => p.stringify()).join(' && ');
   }
-
-};
+}
