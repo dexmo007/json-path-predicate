@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <GitHubCorner/>
     <div id="header">
       <img id="logo" src="./assets/dexmo-icon.png" alt="DexmoHQ Logo"/>
       <h1>JSON Path Predicates</h1>
@@ -10,11 +11,13 @@
 
 <script lang="js">
 import HelloWorld from './components/HelloWorld.vue';
+import GitHubCorner from './components/GitHubCorner.vue';
 
 export default {
   name: 'app',
   components: {
     HelloWorld,
+    GitHubCorner,
   },
 };
 </script>
