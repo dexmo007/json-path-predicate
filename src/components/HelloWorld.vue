@@ -4,13 +4,21 @@
       Enter a predicate <span class="hint">Hint: Press Ctrl+Alt+L to auto-format</span>
 
     </label>
-    <div v-bind:class="{error: predicate === false}">
-      <editor v-model="rawPredicate" @init="predicateEditorInit" lang="json" theme="chrome"
-              width="100%" height="320px"
-      />
-      <span v-if="predicateErrorMessage" class="error-message">
+    <div class="row" v-bind:class="{cheating: cheating}">
+      <div v-bind:class="{error: predicate === false}">
+        <editor v-model="rawPredicate" @init="predicateEditorInit" lang="json" theme="chrome"
+                width="100%" height="320px"
+        />
+        <span v-if="predicateErrorMessage" class="error-message">
         {{predicateErrorMessage}}
       </span>
+      </div>
+      <div class="lapse-btn" @click="cheating = !cheating">
+        <font-awesome-icon class="caret" icon="caret-left"/>
+        Show cheat sheet
+        <i class="em em-eyeglasses"></i>
+      </div>
+      <CheatSheet v-if="cheating"/>
     </div>
     <pre v-if="predicate">{{predicate.stringify()}}</pre>
     <label>
@@ -47,11 +55,13 @@
 <script lang="js">
 import aceEditor from 'vue2-ace-editor';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import CheatSheet from './CheatSheet.vue';
 import JsonPathPredicateParser from '../lib/JsonPathPredicateParser';
 
 import 'brace/ext/language_tools';
 import 'brace/mode/json';
 import 'brace/theme/chrome';
+import { JsonPathPredicates } from '../lib/JsonPathPredicates';
 
 function reformat(jsonString) {
   try {
@@ -113,6 +123,7 @@ export default {
         zz: [0, 1],
       }, undefined, 2),
       testJson: null,
+      cheating: true,
     };
   },
   methods: {
@@ -156,10 +167,12 @@ export default {
   created() {
     this.predicate = JsonPathPredicateParser.parse(this.rawPredicate);
     this.testJson = JSON.parse(this.rawTestJson);
+    // console.log(JsonPathPredicates.GetDefinitions());
   },
   components: {
     editor: aceEditor,
     FontAwesomeIcon,
+    CheatSheet,
   },
 };
 </script>
@@ -169,6 +182,24 @@ export default {
   .container {
     display: flex;
     flex-direction: column;
+  }
+
+  .row {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .row > * {
+    /*height: 320px;*/
+    max-height: 320px;
+  }
+
+  .row > *:not(.lapse-btn) {
+    width: 100%;
+  }
+
+  .row.cheating > *:not(.lapse-btn) {
+    width: 50vw;
   }
 
   div.error {
@@ -199,5 +230,30 @@ export default {
   label {
     margin-top: 1em;
     margin-bottom: 1em;
+  }
+
+  .lapse-btn {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    background-color: #ebebeb;
+    width: 2em;
+    cursor: pointer;
+  }
+
+  .lapse-btn > i {
+    transform: rotate(90deg);
+  }
+
+  .lapse-btn:hover {
+    background-color: #d3d3d3;
+  }
+
+  .caret {
+    transition: transform 175ms ease-in-out;
+  }
+
+  .cheating .caret {
+    transform: rotate(180deg);
+    transform-origin: center;
   }
 </style>

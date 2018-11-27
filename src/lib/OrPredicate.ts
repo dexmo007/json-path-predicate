@@ -1,7 +1,9 @@
 import { JsonPathPredicate, JsonPathPredicates } from '@/lib/JsonPathPredicates';
 import JsonPathPredicateParser from '@/lib/JsonPathPredicateParser';
+import NotPredicate from '@/lib/NotPredicate';
 
 @JsonPathPredicates.register('$or', arg => new OrPredicate(JsonPathPredicateParser.parseArray(arg)))
+@JsonPathPredicates.register('$nor', arg => new NotPredicate(new OrPredicate(JsonPathPredicateParser.parseArray(arg))))
 class OrPredicate implements JsonPathPredicate {
   private readonly predicates: JsonPathPredicate[];
 

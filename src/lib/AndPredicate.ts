@@ -1,7 +1,10 @@
 import { JsonPathPredicate, JsonPathPredicates } from '@/lib/JsonPathPredicates';
 import JsonPathPredicateParser from '@/lib/JsonPathPredicateParser';
 
-@JsonPathPredicates.register('$and', arg => new AndPredicate(JsonPathPredicateParser.parseArray(arg)))
+@JsonPathPredicates.register('$and',
+    arg => new AndPredicate(JsonPathPredicateParser.parseArray(arg)),
+  'The predicate is true if all predicates in the array match',
+  '{"$and":[<pred1>, <pred2>, ...]}')
 class AndPredicate implements JsonPathPredicate {
   private readonly predicates: JsonPathPredicate[];
 

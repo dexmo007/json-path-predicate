@@ -2,7 +2,10 @@ import deepEqual from 'deep-equal';
 import jp from 'jsonpath';
 import { JsonPathPredicate, JsonPathPredicates } from './JsonPathPredicates';
 
-@JsonPathPredicates.register('$eq', arg => new EqualsPredicate(arg))
+@JsonPathPredicates.register('$eq',
+    arg => new EqualsPredicate(arg),
+  'Tests all JSON paths in the array for (deep) equality',
+  '{"$eq":[<path1>, <path2>, ...]}')
 class EqualsPredicate implements JsonPathPredicate {
   constructor(private readonly args: string[]) {
     args.forEach(arg => jp.parse(arg));

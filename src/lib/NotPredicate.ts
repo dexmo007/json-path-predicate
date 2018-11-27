@@ -2,7 +2,7 @@ import { JsonPathPredicate, JsonPathPredicates } from '@/lib/JsonPathPredicates'
 import JsonPathPredicateParser from '@/lib/JsonPathPredicateParser';
 
 @JsonPathPredicates.register('$not', arg => new NotPredicate(JsonPathPredicateParser.parse(arg)))
-class NotPredicate implements JsonPathPredicate {
+export default class NotPredicate implements JsonPathPredicate {
   constructor(private readonly predicate: JsonPathPredicate) {
   }
 

@@ -23,6 +23,8 @@ export default {
 </script>
 
 <style>
+  @import 'https://afeld.github.io/emoji-css/emoji.css';
+
   #app {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;

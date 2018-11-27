@@ -43,11 +43,11 @@ export default class JsonPathPredicateParser {
       throw new Error(`only a single key on root level of predicate allowed: ${keys.join()} for ${JSON.stringify(expr)}`);
     }
     const op = keys[0];
-    const parser = operators[op];
-    if (!parser) {
+    const def = operators[op];
+    if (!def) {
       throw new Error(`invalid operator: ${op}`);
     }
-    return parser(expr[op]);
+    return def.creator(expr[op]);
   }
 
   static parseArray(predicates: any[]): JsonPathPredicate[] {
