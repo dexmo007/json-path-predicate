@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { shallowMount } from '@vue/test-utils';
-import HelloWorld from '@/components/HelloWorld.vue';
+import HelloWorld from '@/components/TestEditor.vue';
 import App from '@/App.vue';
 import GitHubCorner from '@/components/GitHubCorner.vue';
 

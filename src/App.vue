@@ -5,18 +5,18 @@
       <img id="logo" src="./assets/dexmo-icon.png" alt="DexmoHQ Logo"/>
       <h1>JSON Path Predicates</h1>
     </div>
-    <HelloWorld/>
+    <TestEditor/>
   </div>
 </template>
 
 <script lang="js">
-import HelloWorld from './components/HelloWorld.vue';
+import TestEditor from './components/TestEditor.vue';
 import GitHubCorner from './components/GitHubCorner.vue';
 
 export default {
   name: 'app',
   components: {
-    HelloWorld,
+    TestEditor,
     GitHubCorner,
   },
 };

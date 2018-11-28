@@ -93,7 +93,7 @@ const autoFormatCommand = {
 };
 
 export default {
-  name: 'HelloWorld',
+  name: 'TestEditor',
   data() {
     return {
       rawPredicate: JSON.stringify({
