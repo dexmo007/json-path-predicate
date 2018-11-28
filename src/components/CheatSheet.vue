@@ -1,19 +1,22 @@
 <template>
   <div id="cheat-sheet">
     <div class="search-bar">
-      <input class="search__input" v-model="searchTerm" placeholder="Search for operators..."/>
+      <font-awesome-icon class="search-icon" icon="search"/>
+      <input class="search-input" v-model="searchTerm" placeholder="Search for operators..."/>
     </div>
     <div class="search-results">
       <div class="operator-box" v-for="operator in filtered" :key="operator">
         <pre class="operator">{{operator}}</pre>
         <span>{{operators[operator].description+'.'}}</span>
-        Example:<pre>{{operators[operator].example}}</pre>
+        Example:
+        <pre>{{operators[operator].example}}</pre>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { operators } from '../lib/JsonPathPredicateParser';
 
 
@@ -28,8 +31,11 @@ export default {
   computed: {
     filtered() {
       return Object.keys(operators)
-        .filter(op => op.includes(this.searchTerm));
+        .filter(op => op.includes(this.searchTerm.toLowerCase()));
     },
+  },
+  components: {
+    FontAwesomeIcon,
   },
 };
 </script>
@@ -38,46 +44,56 @@ export default {
   * {
     box-sizing: border-box;
   }
+
   #cheat-sheet {
     margin: .5em;
     display: flex;
     flex-direction: column;
   }
-  .search__input {
-    width: 100%;
-    padding: 12px 24px;
 
-    background-color: transparent;
-    /*transition: transform 250ms ease-in-out;*/
-    font-size: 14px;
-    line-height: 18px;
-
-    color: #575756;
-    background-image: url(http://mihaeltomic.com/codepen/input-search/ic_search_black_24px.svg);
-    background-repeat: no-repeat;
-    background-size: 18px 18px;
-    background-position: 95% center;
-    border-radius: 50px;
-    border: 1px solid #575756;
-    transition: all 250ms ease-in-out;
-    backface-visibility: hidden;
-    transform-style: preserve-3d;
+  .search-bar {
+    position: relative;
+    margin-bottom: 5px;
   }
 
-  .search__input::placeholder {
+  .search-input {
+    width: 100%;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid rgba(87, 87, 86, 0.8);
+    padding: 12px 24px 12px 2em;
     color: rgba(87, 87, 86, 0.8);
+    background-color: transparent;
+    font-size: 14px;
+    line-height: 18px;
+  }
+
+  .search-input:hover {
+    color: #2b2b2b;
+    border-bottom-color: #2b2b2b;
+  }
+
+  .search-input::placeholder {
+    color: rgba(87, 87, 86, 0.8);
+    /*color: black;*/
     text-transform: uppercase;
     letter-spacing: 2px;
   }
 
-  .search__input:hover,
-  .search__input:focus {
-    padding: 12px 0;
-    outline: 0;
-    border: 1px solid transparent;
-    border-bottom: 1px solid #575756;
-    border-radius: 0;
-    background-position: 100% center;
+  .search-input:hover::placeholder {
+    color: #2b2b2b;
+  }
+
+  .search-bar:hover .search-icon {
+    color: #2b2b2b;
+  }
+
+  .search-icon {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    left: .9em;
+    color: rgba(87, 87, 86, 0.8);
   }
 
   .search-results {

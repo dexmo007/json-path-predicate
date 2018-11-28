@@ -1,11 +1,13 @@
 <template>
   <div class="container">
     <label>
-      Enter a predicate <span class="hint">Hint: Press Ctrl+Alt+L to auto-format</span>
-
+      Enter a predicate
+      <span v-if="!isMobile" class="hint">
+        Hint: Press {{isMac ? '&#8984;' : 'Ctrl'}}+Alt+L to auto-format
+      </span>
     </label>
-    <div class="row" v-bind:class="{cheating: cheating}">
-      <div v-bind:class="{error: predicate === false}">
+    <div class="row" v-bind:class="{cheating: cheating, mobile: isMobile}">
+      <div class="editor" v-bind:class="{error: predicate === false}">
         <editor v-model="rawPredicate" @init="predicateEditorInit" lang="json" theme="chrome"
                 width="100%" height="320px"
         />
@@ -15,40 +17,46 @@
       </div>
       <div class="lapse-btn" @click="cheating = !cheating">
         <font-awesome-icon class="caret" icon="caret-left"/>
-        Show cheat sheet
+        {{cheating ? 'Hide' : 'Show'}} cheat sheet
         <i class="em em-eyeglasses"></i>
       </div>
-      <CheatSheet v-if="cheating"/>
+      <CheatSheet class="cheat" v-bind:class="{'width-hidden': !cheating}"/>
     </div>
-    <pre v-if="predicate">{{predicate.stringify()}}</pre>
+    <pre id="predicate-string" v-if="predicate">{{predicate.stringify()}}</pre>
     <label>
-      Test your JSON <span class="hint">Hint: Press Ctrl+Alt+L to auto-format</span>
+      Test your JSON <span class="hint">
+      <span v-if="!isMobile" class="hint">
+        Hint: Press {{isMac ? '&#8984;' : 'Ctrl'}}+Alt+L to auto-format
+      </span>
+    </span>
     </label>
     <editor v-model="rawTestJson" @init="testJsonEditorInit" lang="json" theme="chrome"
             width="100%" height="200px"></editor>
     <label>
       Results
     </label>
-    <div v-if="!predicate">
-      <font-awesome-icon icon="times-circle" class="result-icon"></font-awesome-icon>
-      <pre>
+    <transition name="fade" mode="out-in">
+      <div key="predicate" v-if="!predicate">
+        <font-awesome-icon icon="times-circle" class="result-icon"></font-awesome-icon>
+        <pre>
         First of all, get your predicate fixed!
       </pre>
-    </div>
-    <div v-else-if="!testJson || !result" class="error-message">
-      <div class="result-icon error-icon">
-        <font-awesome-icon icon="times-circle"></font-awesome-icon>
       </div>
-      <pre v-if="!testJson">
+      <div key="json" v-else-if="!testJson || !result" class="error-message">
+        <div class="result-icon error-icon">
+          <font-awesome-icon icon="times-circle"></font-awesome-icon>
+        </div>
+        <pre v-if="!testJson">
       Invalid JSON
     </pre>
-      <pre v-else-if="!result" class="error-message">
+        <pre key="match" v-else-if="!result" class="error-message">
       Predicate not matching
     </pre>
-    </div>
-    <div v-else class="result-icon success-icon">
-      <font-awesome-icon icon="check-circle"/>
-    </div>
+      </div>
+      <div key="success" v-else class="result-icon success-icon">
+        <font-awesome-icon icon="check-circle"/>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -61,7 +69,7 @@ import JsonPathPredicateParser from '../lib/JsonPathPredicateParser';
 import 'brace/ext/language_tools';
 import 'brace/mode/json';
 import 'brace/theme/chrome';
-import { JsonPathPredicates } from '../lib/JsonPathPredicates';
+import { isMac, isMobile } from '../util/UserAgent';
 
 function reformat(jsonString) {
   try {
@@ -123,7 +131,9 @@ export default {
         zz: [0, 1],
       }, undefined, 2),
       testJson: null,
-      cheating: true,
+      cheating: false,
+      isMobile,
+      isMac,
     };
   },
   methods: {
@@ -187,19 +197,35 @@ export default {
   .row {
     display: flex;
     flex-direction: row;
-  }
-
-  .row > * {
-    /*height: 320px;*/
+    width: 100%;
     max-height: 320px;
   }
 
-  .row > *:not(.lapse-btn) {
+  .row > * {
+    height: 320px;
+    max-height: 320px;
+    transition: width 175ms ease-in-out;
+  }
+
+  .row > .editor, .row > .cheat {
     width: 100%;
   }
 
-  .row.cheating > *:not(.lapse-btn) {
-    width: 50vw;
+  .row.cheating:not(.mobile) > .editor, .row.cheating:not(.mobile) > .cheat {
+    width: 50vw !important;
+  }
+
+  .row.cheating.mobile > .editor {
+    width: 0 !important;
+    margin: 0 !important;
+  }
+
+  #predicate-string {
+    white-space: pre-wrap;
+    word-wrap: break-spaces;
+    padding-left: 1em;
+    padding-right: 1em;
+    margin-top: 1em;
   }
 
   div.error {
@@ -255,5 +281,14 @@ export default {
   .cheating .caret {
     transform: rotate(180deg);
     transform-origin: center;
+  }
+
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity 175ms;
+  }
+
+  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */
+  {
+    opacity: 0;
   }
 </style>

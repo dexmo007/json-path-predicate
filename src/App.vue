@@ -25,6 +25,11 @@ export default {
 <style>
   @import 'https://afeld.github.io/emoji-css/emoji.css';
 
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
   #app {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -43,5 +48,19 @@ export default {
   #logo {
     width: 70px;
     margin-right: 10px;
+  }
+
+  .width-hidden {
+    width: 0 !important;
+    margin: 0 !important;
+    max-width: 0 !important;
+    padding: 0 !important;
+  }
+
+  .width-hidden * {
+    width: 0 !important;
+    margin: 0 !important;
+    max-width: 0 !important;
+    padding: 0 !important;
   }
 </style>
