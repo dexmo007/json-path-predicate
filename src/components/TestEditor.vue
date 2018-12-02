@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" :class="{mobile: isMobile}">
     <label>
       Enter a predicate
       <span v-if="!isMobile" class="hint">
@@ -35,32 +35,26 @@
     <label>
       Results
     </label>
-    <transition name="fade" mode="out-in">
-      <div key="predicate" v-if="!predicate">
-        <font-awesome-icon icon="times-circle" class="result-icon"></font-awesome-icon>
-        <pre>
-        First of all, get your predicate fixed!
-      </pre>
-      </div>
-      <div key="json" v-else-if="!testJson || !result" class="error-message">
-        <div class="result-icon error-icon">
-          <font-awesome-icon icon="times-circle"></font-awesome-icon>
-        </div>
-        <pre v-if="!testJson">
-      Invalid JSON
-    </pre>
+    <div class="result">
+      <transitioning-result-icon :error="!testJson || !result"
+                                 success-color="#3dff72" class="result-icon"/>
+      <transition name="fade">
+        <pre key="predicate" v-if="!predicate" class="error-message">
+          First of all, get your predicate fixed!
+        </pre>
+        <pre v-else-if="!testJson" key="json" class="error-message">
+          Invalid JSON
+        </pre>
         <pre key="match" v-else-if="!result" class="error-message">
       Predicate not matching
     </pre>
-      </div>
-      <div key="success" v-else class="result-icon success-icon">
-        <font-awesome-icon icon="check-circle"/>
-      </div>
-    </transition>
+      </transition>
+    </div>
   </div>
 </template>
 
 <script lang="js">
+import TransitioningResultIcon from '@dexmo/vue-transitioning-result-icon';
 import aceEditor from 'vue2-ace-editor';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import CheatSheet from './CheatSheet.vue';
@@ -183,6 +177,7 @@ export default {
     editor: aceEditor,
     FontAwesomeIcon,
     CheatSheet,
+    TransitioningResultIcon,
   },
 };
 </script>
@@ -192,6 +187,10 @@ export default {
   .container {
     display: flex;
     flex-direction: column;
+  }
+
+  .container.mobile {
+    margin-bottom: 50px;
   }
 
   .row {
@@ -234,18 +233,18 @@ export default {
 
   .error-message {
     color: red;
+    white-space: pre-line;
+  }
+
+  .result {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
 
   .result-icon {
-    font-size: 3em;
-  }
-
-  .error-icon {
-    color: red;
-  }
-
-  .success-icon {
-    color: #3dff72;
+    width: 70px;
   }
 
   .hint {

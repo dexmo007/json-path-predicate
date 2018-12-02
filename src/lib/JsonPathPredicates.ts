@@ -16,9 +16,9 @@ export namespace JsonPathPredicates {
   }
 
   export function register(op: string,
-                           creator: (arg: any) => JsonPathPredicate,
-                           description: string = 'Some description text',
-  example?: string): (target: any) => void {
+    creator: (arg: any) => JsonPathPredicate,
+    description: string = 'Some description text',
+    example?: string): (target: any) => void {
     if (!op) {
       throw new Error('JsonPathPredicate operator must be non empty');
     }
@@ -28,7 +28,7 @@ export namespace JsonPathPredicates {
     definitions[op] = {
       creator,
       description,
-      example: example || '{"foo":123}'
+      example: example || '{"foo":123}',
     };
     return () => {
     };
