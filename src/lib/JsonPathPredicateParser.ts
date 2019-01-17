@@ -1,17 +1,22 @@
 import ExistsPredicate from './ExistsPredicate';
 import { JsonPathPredicate, JsonPathPredicates, PredicateDefinitions } from '@/lib/JsonPathPredicates';
 
+import './AllPredicate';
 import './AndPredicate';
+import './ElemMatchPredicate';
 import './EqualsPredicate';
 import './GreaterThanOrEqualsPredicate';
 import './GreaterThanPredicate';
 import './InPredicate';
+import './JsonSchemaPredicate';
 import './LessThanOrEqualsPredicate';
 import './LessThanPredicate';
 import './NotEqualsPredicate';
 import './NotPredicate';
 import './OrPredicate';
 import './RegexPredicate';
+import './SizePredicate';
+import './WherePredicate';
 
 
 export const operators: PredicateDefinitions = JsonPathPredicates.GetDefinitions();
